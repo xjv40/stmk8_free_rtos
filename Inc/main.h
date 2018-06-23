@@ -90,22 +90,7 @@
 /* #define USE_FULL_ASSERT    1U */
 
 /* USER CODE BEGIN Private defines */
-#define A0 0xC0
-#define A1 0xF9
-#define A2 0xA4
-#define A3 0xB0
-#define A4 0x99
-#define A5 0x92
-#define A6 0x02
-#define A7 0xf8
-#define A8 0x80
-#define A9 0x10
-#define AA 0x88
-#define AB 0x00
-#define AC 0xC6
-#define AD 0xC0
-#define AE 0x86
-#define AF 0x8E
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

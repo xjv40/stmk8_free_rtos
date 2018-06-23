@@ -55,6 +55,7 @@
 #define CODE_PERSO
 #ifdef CODE_PERSO
 #include "../sources/source_header/clignotant.h"
+#include "../sources/source_header/afficheur_7_s.h"
 #endif
 /* USER CODE END Includes */
 
@@ -67,13 +68,16 @@ osThreadId defaultTaskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-#ifdef CODE_PERSO
+#ifdef CODE_PERSO_H_CLIGNOTANT_H_
 osThreadId clignotantTaskHandle;
 const uint32_t clignotantParameters[2] = {(uint32_t) led_interne_GPIO_Port,
 										  (uint32_t) led_interne_Pin};
 #endif
 
-uint8_t data[16] = {A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, AA, AB, AC, AD, AE, AF};
+#ifdef AFFICHEUR_7_S_H_
+osThreadId afficheurTaskHandle;
+const SPI_HandleTypeDef afficheurParameters[1] = {(SPI_HandleTypeDef*) &hspi1};
+#endif
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -85,7 +89,6 @@ void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-void shiftOut(uint8_t* data, uint16_t size);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -146,9 +149,13 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
-#ifdef CODE_PERSO
+#ifdef CODE_PERSO_H_CLIGNOTANT_H_
   osThreadDef(taskClignotant, StartTaskClignotant, osPriorityNormal, 0, 128);
   clignotantTaskHandle = osThreadCreate(osThread(taskClignotant), (void*) clignotantParameters);
+#endif
+#ifdef AFFICHEUR_7_S_H_
+  osThreadDef(taskAfficheur, startTaskAfficheur, osPriorityNormal, 0, 128);
+  afficheurTaskHandle = osThreadCreate(osThread(taskAfficheur), (void*) afficheurParameters);
 #endif
   /* USER CODE END RTOS_THREADS */
 
@@ -316,13 +323,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void shiftOut(uint8_t* pdata, uint16_t size) {
-	HAL_GPIO_WritePin(SRCLR_GPIO_Port, SRCLR_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(SRCLR_GPIO_Port, SRCLR_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(RCLK_GPIO_Port, RCLK_Pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit(&hspi1, pdata, size, 100);
-	HAL_GPIO_WritePin(RCLK_GPIO_Port, RCLK_Pin, GPIO_PIN_SET);
-}
+
 /* USER CODE END 4 */
 
 /* StartDefaultTask function */
@@ -331,17 +332,9 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN 5 */
 	int i;
-//	HAL_GPIO_WritePin(SRCLR_GPIO_Port, SRCLR_Pin, GPIO_PIN_RESET);
-//	osDelay(100);
-//	HAL_GPIO_WritePin(SRCLR_GPIO_Port, SRCLR_Pin, GPIO_PIN_SET);
-//	shiftOut(&data, 1);
 	/* Infinite loop */
 	for(;;)
 	{
-		for (i = 0; i < 16; i++) {
-			shiftOut(data + i, 1);
-			osDelay(500);
-		}
 		osDelay(1);
 	}
   /* USER CODE END 5 */ 
