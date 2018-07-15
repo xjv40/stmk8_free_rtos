@@ -76,7 +76,7 @@ const uint32_t clignotantParameters[2] = {(uint32_t) led_interne_GPIO_Port,
 
 #ifdef AFFICHEUR_7_S_H_
 osThreadId afficheurTaskHandle;
-const SPI_HandleTypeDef afficheurParameters[1] = {(SPI_HandleTypeDef*) &hspi1};
+const uint32_t afficheurParameters[1] = {(uint32_t) &hspi1};
 #endif
 /* USER CODE END PV */
 
